@@ -3,7 +3,8 @@ import requests
 # Download the helper library from https://www.twilio.com/docs/python/install
 import os
 from twilio.rest import Client
-
+import datetime  
+now = datetime.datetime.now()  
 
 # Find your Account SID and Auth Token at twilio.com/console
 # and set the environment variables. See http://twil.io/secure
@@ -21,7 +22,7 @@ def time_greater_than_4(time):
 
 today = '2023-03-28'
 url = "https://app.jackrabbitclass.com/jr3.0/Openings/OpeningsJS?OrgID=531495&Loc=SF&showcols=Cat1&hidecols=tuition,description,session,StartDate,EndDate,ages,gender,class&sort=days,StartTime&closed=full&style=color:blue"
-print(f"Fetching data from {url} for {today}.")
+print(f"Fetching data from {url} for {now}.")
 r = requests.get(url)
 soup = BeautifulSoup(r.text, 'html.parser')
 table_rows = soup.table.find_all('tr')
