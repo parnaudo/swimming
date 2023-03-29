@@ -51,7 +51,7 @@ for tr in table_rows:
             twilio_body=f"Petite Baleen spot is OPEN at {':'.join(row)}"
             # <a href='https://www.swimlpb.com/locations/san-francisco'>click here</a>
             print(twilio_body)
-            phone_numbers = ['+15712127641','+18583426154']
+            phone_numbers = []
             message = client.messages \
                 .create(
                     body=twilio_body,
