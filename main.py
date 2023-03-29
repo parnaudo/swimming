@@ -31,12 +31,8 @@ l = []
 cols = [a.string for a in soup.table.tr.find_all('th')]
 print(cols)
 for tr in table_rows:
-    # print(tr)
     th = tr.find_all('th')
-    # print(th)
     td = tr.find_all('td')
-    # print(td)
-    # print("NEWLINE")
     header = [tr.text.strip() for tr in th]
     if header[0] == 'Level 1 (ages 3-5)':
         print("header: ",header[0])
