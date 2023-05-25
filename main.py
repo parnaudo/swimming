@@ -41,11 +41,10 @@ for tr in table_rows:
         start_time = row[1].split("-")
         after_4 = time_greater_than_4(start_time[0])
         print(start_time)
-        if after_4 == True:
+        if after_4 == False:
             print("BINGOOOOOOOO")
             print(after_4)
             twilio_body=f"Petite Baleen spot is OPEN at {':'.join(row)}"
-            # <a href='https://www.swimlpb.com/locations/san-francisco'>click here</a>
             print(twilio_body)
             phone_numbers = []
             message = client.messages \
@@ -54,14 +53,5 @@ for tr in table_rows:
                     from_='+18885221227',
                     to=phone_numbers
                 )
-
-# print(message)
-    # # print(row)
-
-    # print("header: ",header[0])
-    # # if(header)
-    # row = [tr.text.strip() for tr in td]
-    # print("row: ",row)
-#     l.append(row)
-# df = pd.DataFrame(l, columns=cols)
-# print(f'Pre-process df size: {df.shape}')
+        else:
+            print("everything is too late 😭")
