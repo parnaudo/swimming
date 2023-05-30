@@ -11,7 +11,12 @@ now = datetime.datetime.now()
 account_sid = os.environ['TWILIO_ACCOUNT_SID']
 #account_sid = 'MG07a5b06e7cd9a774b5e6bbfe6a2eaf6c'
 auth_token = os.environ['TWILIO_AUTH_TOKEN']
+messaging_service_sid='MG07a5b06e7cd9a774b5e6bbfe6a2eaf6c'
 client = Client(account_sid, auth_token)
+
+# class_level = 'Level 5 (ages 6-10)'
+class_level = 'Level 1 (ages 3-5)'
+phone_numbers = ['']
 
 def time_greater_than_4(time):
     print(time[:1])
@@ -19,10 +24,19 @@ def time_greater_than_4(time):
         return True
     else:
         return False
+    
 
-# class_level = 'Level 5 (ages 6-10)'
-class_level = 'Level 1 (ages 3-5)'
-today = '2023-03-28'
+def send_twilio_sms(row: list, phone_numbers: list, messaging_service_sid: str):
+    twilio_body=f"Petite Baleen spot is OPEN on {row[0]} at {row[1]}"
+    print(twilio_body)
+    message = client.messages \
+        .create(
+            body=twilio_body,
+            messaging_service_sid=messaging_service_sid,
+            # from_='+18885221227',
+            to=phone_numbers
+        )
+    
 url = "https://app.jackrabbitclass.com/jr3.0/Openings/OpeningsJS?OrgID=531495&Loc=SF&showcols=Cat1&hidecols=tuition,description,session,StartDate,EndDate,ages,gender,class&sort=days,StartTime&closed=full&style=color:blue"
 print(f"Fetching data from {url} for {now}.")
 r = requests.get(url)
@@ -47,28 +61,10 @@ for tr in table_rows:
         weekdays = ['Mon','Tue','Wed','Thu','Fri']
         weekend = ['Sat','Sun']
         if after_4 == True and class_day in weekdays:
-            print("BINGOOOOOOOO")
-            print(after_4)
-            twilio_body=f"Petite Baleen spot is OPEN on {row[0]} at {row[1]}"
-            print(twilio_body)
-            phone_numbers = ['']
-            message = client.messages \
-                .create(
-                    body=twilio_body,
-                    messaging_service_sid='MG07a5b06e7cd9a774b5e6bbfe6a2eaf6c',
-                    # from_='+18885221227',
-                    to=phone_numbers
-                )
+            print("BING0 Weekday class")
+            send_twilio_sms(row, phone_numbers, messaging_service_sid)
         elif class_day in weekend:
-            print("Weekend Class WOOT")
-            twilio_body=f"Petite Baleen spot is OPEN on {row[0]} at {row[1]}"
-            print(twilio_body)
-            phone_numbers = []
-            message = client.messages \
-                .create(
-                    body=twilio_body,
-                    messaging_service_sid='MG07a5b06e7cd9a774b5e6bbfe6a2eaf6c',
-                    to=phone_numbers
-                )
+            print("W00T Weekend Class")
+            send_twilio_sms(row, phone_numbers, messaging_service_sid)
         else:
             print("everything is too early 😭")
