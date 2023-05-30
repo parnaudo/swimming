@@ -15,12 +15,11 @@ messaging_service_sid='MG07a5b06e7cd9a774b5e6bbfe6a2eaf6c'
 client = Client(account_sid, auth_token)
 
 # class_level = 'Level 5 (ages 6-10)'
-class_level = 'Level 1 (ages 3-5)'
-phone_numbers = ['']
-
+class_level = ['Level 1/ Level 2 (ages 6-10)','Level 1 (ages 3-5)']
+phone_numbers = []
 def time_greater_than_4(time):
     print(time[:1])
-    if time.endswith("pm") and int(time[:1]) > 4:
+    if time.endswith("pm") and int(time[:1]) >= 4:
         return True
     else:
         return False
@@ -29,13 +28,14 @@ def time_greater_than_4(time):
 def send_twilio_sms(row: list, phone_numbers: list, messaging_service_sid: str):
     twilio_body=f"Petite Baleen spot is OPEN on {row[0]} at {row[1]}"
     print(twilio_body)
-    message = client.messages \
-        .create(
-            body=twilio_body,
-            messaging_service_sid=messaging_service_sid,
-            # from_='+18885221227',
-            to=phone_numbers
-        )
+    for number in phone_numbers:
+        message = client.messages \
+            .create(
+                body=twilio_body,
+                messaging_service_sid=messaging_service_sid,
+                # from_='+18885221227',
+                to=number
+            )
     
 url = "https://app.jackrabbitclass.com/jr3.0/Openings/OpeningsJS?OrgID=531495&Loc=SF&showcols=Cat1&hidecols=tuition,description,session,StartDate,EndDate,ages,gender,class&sort=days,StartTime&closed=full&style=color:blue"
 print(f"Fetching data from {url} for {now}.")
@@ -50,7 +50,7 @@ for tr in table_rows:
     th = tr.find_all('th')
     td = tr.find_all('td')
     header = [tr.text.strip() for tr in th]
-    if header[0] == class_level:
+    if header[0] in class_level:
         print("header: ",header[0])
         row = [tr.text.strip() for tr in td]
         print("row: ",row)
