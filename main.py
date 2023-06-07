@@ -7,16 +7,16 @@ import datetime
 import time
 clients_dict = {'Bonnie': {
                       'class_level': ['Toddler and Me'],
-                      'weekdays': None,
-                      'weekday_start_hour': None,
-                      'weekday_end_hour': None,
+                      'weekdays': ['Fri'],
+                      'weekday_start_hour': 10,
+                      'weekday_end_hour': 10,
                       'weekend_days': ['Sun'],
                       'weekend_start_hour': 10,
                       'weekend_end_hour': 10,
                       'phone_numbers': [''], },
                       
             'Ross/Nicole': {
-                      'class_level': ['Level 1/ Level 2 (ages 6-10)', 'Level 1 (ages 3-5)'],
+                      'class_level': ['Level 1 (ages 3-5)'],
                       'weekdays': ['Mon','Tue','Wed','Thu','Fri'],
                       'weekday_start_hour': 16,
                       'weekday_end_hour': 19,
@@ -35,11 +35,6 @@ auth_token = os.environ['TWILIO_AUTH_TOKEN']
 messaging_service_sid='MG07a5b06e7cd9a774b5e6bbfe6a2eaf6c'
 client = Client(account_sid, auth_token)
 
-# class_level = 'Level 5 (ages 6-10)'
-class_level = 'Workshop'
-#class_level = ['Level 1/ Level 2 (ages 6-10)','Level 1 (ages 3-5)']
-class_level = 'Baby and Me'
-phone_numbers = ['']
 def time_greater_than_4(time):
     print(time[:1])
     if time.endswith("pm") and int(time[:1]) >= 4 and int(time[:1]) <= 7:
