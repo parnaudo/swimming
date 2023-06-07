@@ -5,26 +5,12 @@ import os
 from twilio.rest import Client
 import datetime  
 import time
-clients_dict = {'Bonnie': {
-                      'class_level': ['Toddler and Me'],
-                      'weekdays': ['Fri'],
-                      'weekday_start_hour': 10,
-                      'weekday_end_hour': 10,
-                      'weekend_days': ['Sun'],
-                      'weekend_start_hour': 10,
-                      'weekend_end_hour': 10,
-                      'phone_numbers': [''], },
-                      
-            'Ross/Nicole': {
-                      'class_level': ['Level 1 (ages 3-5)'],
-                      'weekdays': ['Mon','Tue','Wed','Thu','Fri'],
-                      'weekday_start_hour': 16,
-                      'weekday_end_hour': 19,
-                      'weekend_days': ['Sat','Sun'],
-                      'weekend_start_hour': 9,
-                      'weekend_end_hour': 15,
-                      'phone_numbers': [''] }
-            }
+import json
+
+
+with open('clients.json', 'r') as f:
+    clients_dict = json.load(f)
+
 now = datetime.datetime.now()  
 
 # Find your Account SID and Auth Token at twilio.com/console
