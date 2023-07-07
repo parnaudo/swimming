@@ -36,19 +36,24 @@ def convert_str_to_24hr(time):
 def send_twilio_sms(row: list, phone_numbers: list, messaging_service_sid: str, name: str):
     twilio_body=f"Hi {name}, Petite Baleen spot is OPEN on {row[0]} at {row[1]}"
     print(twilio_body)
-    for number in phone_numbers:
-        message = client.messages \
-            .create(
-                body=twilio_body,
-                messaging_service_sid=messaging_service_sid,
-                # from_='+18885221227',
-                to=number
-            )
-        time.sleep(5)
+    if bool(phone_numbers) is True:
+        for number in phone_numbers:
+            message = client.messages \
+                .create(
+                    body=twilio_body,
+                    messaging_service_sid=messaging_service_sid,
+                    # from_='+18885221227',
+                    to=number
+                )
+            time.sleep(5)
+    else:
+        print("No numbers to text")    
+
         # if message.error_code is not None:
         # print(message.error_code)
         # print(message.error_message)
-    
+
+ 
 url = "https://app.jackrabbitclass.com/jr3.0/Openings/OpeningsJS?OrgID=531495&Loc=SF&showcols=Cat1&hidecols=tuition,description,session,StartDate,EndDate,ages,gender,class&sort=days,StartTime&closed=full&style=color:blue"
 print(f"Fetching data from {url} for {now}.")
 r = requests.get(url)
