@@ -6,7 +6,8 @@ from twilio.rest import Client
 import datetime  
 import time
 import json
-
+import redis
+red = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 with open('clients.json', 'r') as f:
     clients_dict = json.load(f)
@@ -38,14 +39,15 @@ def send_twilio_sms(row: list, phone_numbers: list, messaging_service_sid: str, 
     print(twilio_body)
     if bool(phone_numbers) is True:
         for number in phone_numbers:
-            message = client.messages \
-                .create(
-                    body=twilio_body,
-                    messaging_service_sid=messaging_service_sid,
-                    # from_='+18885221227',
-                    to=number
-                )
-            time.sleep(5)
+            # message = client.messages \
+            #     .create(
+            #         body=twilio_body,
+            #         messaging_service_sid=messaging_service_sid,
+            #         # from_='+18885221227',
+            #         to=number
+            #     )
+            print(twilio_body)
+            time.sleep(1)
     else:
         print("No numbers to text")    
 
@@ -77,16 +79,21 @@ for name, config in clients_dict.items():
             class_day = row[0]
             start_time = row[1].split("-")
             hour_24 = convert_str_to_24hr(start_time[0])
+            alert_key = f"{class_day}-{hour_24}-{name}"
             
-            if config['weekday_start_hour'] is not None and config['weekday_end_hour'] is not None and class_day in config['weekdays']:
+            if red.exists(alert_key) == False and config['weekday_start_hour'] is not None and config['weekday_end_hour'] is not None and class_day in config['weekdays']:
                 print(f"Weekday Eval! {config['weekday_start_hour']} <= {hour_24} <= {config['weekday_end_hour']}")
                 if (hour_24 >= config['weekday_start_hour'] and hour_24 <= config['weekday_end_hour']) and class_day in config['weekdays']:
                     print("BING0 Weekday class")
+                    print(alert_key)
+                    red.set(alert_key,1)
                     send_twilio_sms(row, config['phone_numbers'], messaging_service_sid,name)
-            elif config['weekend_start_hour'] is not None and config['weekend_end_hour'] is not None and class_day in config['weekend_days']:
+            elif red.exists(alert_key) == False and config['weekend_start_hour'] is not None and config['weekend_end_hour'] is not None and class_day in config['weekend_days']:
                 print(f"EOW Eval! {config['weekend_start_hour']} <= {hour_24} <= {config['weekend_end_hour']}")
                 if (hour_24 >= config['weekend_start_hour'] and hour_24 <= config['weekend_end_hour']) and class_day in config['weekend_days']:
                     print("W00T Weekend Class")
+                    print(alert_key)
+                    red.set(alert_key,1)
                     send_twilio_sms(row, config['phone_numbers'], messaging_service_sid,name)
             else:
                 print("none/nada/zilch matches our params")   
