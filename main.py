@@ -39,15 +39,15 @@ def send_twilio_sms(row: list, phone_numbers: list, messaging_service_sid: str, 
     print(twilio_body)
     if bool(phone_numbers) is True:
         for number in phone_numbers:
-            # message = client.messages \
-            #     .create(
-            #         body=twilio_body,
-            #         messaging_service_sid=messaging_service_sid,
-            #         # from_='+18885221227',
-            #         to=number
-            #     )
-            print(twilio_body)
-            time.sleep(1)
+            message = client.messages \
+                .create(
+                    body=twilio_body,
+                    messaging_service_sid=messaging_service_sid,
+                    # from_='+18885221227',
+                    to=number
+                )
+            # print(twilio_body)
+            time.sleep(5)
     else:
         print("No numbers to text")    
 
