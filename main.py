@@ -17,9 +17,8 @@ now = datetime.datetime.now()
 # Find your Account SID and Auth Token at twilio.com/console
 # and set the environment variables. See http://twil.io/secure
 account_sid = os.environ['TWILIO_ACCOUNT_SID']
-#account_sid = 'MG07a5b06e7cd9a774b5e6bbfe6a2eaf6c'
 auth_token = os.environ['TWILIO_AUTH_TOKEN']
-messaging_service_sid='MG07a5b06e7cd9a774b5e6bbfe6a2eaf6c'
+messaging_service_sid=os.environ['TWILIO_MESSAGE_SERVICE_SID']
 client = Client(account_sid, auth_token)
 
 def time_greater_than_4(time):
