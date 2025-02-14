@@ -33,8 +33,8 @@ def convert_str_to_24hr(time):
     return int(time_dt.strftime("%H"))
 
 
-def send_twilio_sms(row: list, phone_numbers: list, messaging_service_sid: str, name: str):
-    twilio_body=f"Hi {name}, Petite Baleen spot is OPEN on {row[0]} at {row[1]}"
+def send_twilio_sms(row: list, phone_numbers: list, messaging_service_sid: str, name: str, class_level: str):
+    twilio_body=f"Hi {name}, Petite Baleen class {class_level} is OPEN on {row[0]} at {row[1]}"
     print(twilio_body)
     if bool(phone_numbers) is True:
         for number in phone_numbers:
@@ -85,14 +85,14 @@ for name, config in clients_dict.items():
                 if (hour_24 >= config['weekday_start_hour'] and hour_24 <= config['weekday_end_hour']) and class_day in config['weekdays']:
                     print(alert_key)
                     red.set(alert_key,1)
-                    send_twilio_sms(row, config['phone_numbers'], messaging_service_sid,name)
+                    send_twilio_sms(row, config['phone_numbers'], messaging_service_sid,name, header[0])
                     print("BING0 Weekday class:",now)
             elif red.exists(alert_key) == False and config['weekend_start_hour'] is not None and config['weekend_end_hour'] is not None and class_day in config['weekend_days']:
                 print(f"EOW Eval! {config['weekend_start_hour']} <= {hour_24} <= {config['weekend_end_hour']}")
                 if (hour_24 >= config['weekend_start_hour'] and hour_24 <= config['weekend_end_hour']) and class_day in config['weekend_days']:       
                     print(alert_key)
                     red.set(alert_key,1)
-                    send_twilio_sms(row, config['phone_numbers'], messaging_service_sid,name)
+                    send_twilio_sms(row, config['phone_numbers'], messaging_service_sid,name, header[0])
                     print("W00T Weekend Class:", now)
             else:
                 print("none/nada/zilch matches our params")   
