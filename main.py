@@ -29,7 +29,7 @@ def time_greater_than_4(time):
         return False
 
 def convert_str_to_24hr(time):
-    time_dt = datetime.datetime.strptime(time, '%I:%M%p')
+    time_dt = datetime.datetime.strptime(time.strip(), '%I:%M%p')
     return int(time_dt.strftime("%H"))
 
 
