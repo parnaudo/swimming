@@ -64,9 +64,13 @@ print(f"Fetched {len(table_rows) - 1} rows.")
 l = []
 cols = [a.string for a in soup.table.tr.find_all('th')]
 print(cols)
+local_hour = now.hour
+local_day = now.strftime("%a")
 for name, config in clients_dict.items():
-    print(name)
-    print(config['weekday_start_hour'])
+    print(f"\n--- {name} ---")
+    print(f"  Local time: {now.strftime('%I:%M%p')} ({local_hour}:00 24hr) on {local_day}")
+    print(f"  Weekday window: {config['weekday_start_hour']}:00 - {config['weekday_end_hour']}:00 on {config['weekdays']}")
+    print(f"  Weekend window: {config['weekend_start_hour']}:00 - {config['weekend_end_hour']}:00 on {config['weekend_days']}")
     for tr in table_rows:
         th = tr.find_all('th')
         td = tr.find_all('td')
@@ -79,20 +83,25 @@ for name, config in clients_dict.items():
             start_time = row[1].split("-")
             hour_24 = convert_str_to_24hr(start_time[0])
             alert_key = f"{class_day}-{hour_24}-{name}"
+            in_weekday_range = config['weekday_start_hour'] is not None and config['weekday_start_hour'] <= hour_24 <= config['weekday_end_hour']
+            in_weekend_range = config['weekend_start_hour'] is not None and config['weekend_start_hour'] <= hour_24 <= config['weekend_end_hour']
+            print(f"  Class time: {start_time[0].strip()} ({hour_24}:00 24hr) on {class_day}")
             
             if red.exists(alert_key) == False and config['weekday_start_hour'] is not None and config['weekday_end_hour'] is not None and class_day in config['weekdays']:
-                print(f"Weekday Eval! {config['weekday_start_hour']} <= {hour_24} <= {config['weekday_end_hour']}")
-                if (hour_24 >= config['weekday_start_hour'] and hour_24 <= config['weekday_end_hour']) and class_day in config['weekdays']:
+                match_str = "MATCH" if in_weekday_range else "NO MATCH"
+                print(f"  Weekday Eval: {config['weekday_start_hour']}:00 <= {hour_24}:00 <= {config['weekday_end_hour']}:00 -> {match_str}")
+                if in_weekday_range and class_day in config['weekdays']:
                     print(alert_key)
                     red.set(alert_key,1)
                     send_twilio_sms(row, config['phone_numbers'], messaging_service_sid,name, header[0])
                     print("BING0 Weekday class:",now)
             elif red.exists(alert_key) == False and config['weekend_start_hour'] is not None and config['weekend_end_hour'] is not None and class_day in config['weekend_days']:
-                print(f"EOW Eval! {config['weekend_start_hour']} <= {hour_24} <= {config['weekend_end_hour']}")
-                if (hour_24 >= config['weekend_start_hour'] and hour_24 <= config['weekend_end_hour']) and class_day in config['weekend_days']:       
+                match_str = "MATCH" if in_weekend_range else "NO MATCH"
+                print(f"  Weekend Eval: {config['weekend_start_hour']}:00 <= {hour_24}:00 <= {config['weekend_end_hour']}:00 -> {match_str}")
+                if in_weekend_range and class_day in config['weekend_days']:       
                     print(alert_key)
                     red.set(alert_key,1)
                     send_twilio_sms(row, config['phone_numbers'], messaging_service_sid,name, header[0])
                     print("W00T Weekend Class:", now)
             else:
-                print("none/nada/zilch matches our params")   
+                print("  No matching day/time window for this class")   
